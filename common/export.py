@@ -28,7 +28,6 @@ def export_onnx(model,
         onnx.save(onnx_sim_model, root + name + '.onnx')
         
     print('Export onnx model as:\n', root + name + '.onnx\n')
-        
 
 def export_jit(model,
                input_size=224,
