@@ -53,10 +53,10 @@ def train_one_epoch(model,
         running_loss += loss.item()
         accuracy = float(running_ture) / float(total)
         
-        if i % print_iteration == print_iteration - 1:
+        if (i % print_iteration == print_iteration - 1) or i == len(training_loader) - 1:
             last_loss = running_loss / 200 # loss per batch
             print('===========================')
-            print("Epoch: [{}/{}]".format(epoch_index, max_epoch))
+            print("Epoch: [{}/{}]".format(epoch_index, max_epoch - 1))
             print('Iteration:','[{}/{}]'.format(i + 1 ,len(training_loader)))
             print('Loss:', last_loss)
             print('Learn rate:', optimizer.param_groups[0]['lr'])
@@ -155,7 +155,7 @@ def train(num_classes=10,
         
         accuracy_v = float(running_vture) / float(total)
         print('===========================')
-        print("Epoch: [{}/{}]".format(epoch, max_epoch))
+        print("Epoch: [{}/{}]".format(epoch, max_epoch - 1))
         print('Valid in validation set:')
         print('Accuracy:')
         print('Training:   {:.2f}%'.format(accuracy * 100))
@@ -178,9 +178,7 @@ def train(num_classes=10,
             
             export_onnx(model, input_size=input_size, name='model', root=svdir)
             export_jit(model, input_size=input_size, name='model', root=svdir)
-            
-            
-    
+ 
 def main(option):
     
     # training_set = datasets.CIFAR10('./data_cifar10', train=True, transform=transforms.ToTensor(), download=True)
@@ -188,7 +186,7 @@ def main(option):
     
     transform = transforms.Compose([transforms.Resize((option.input_size,option.input_size)),transforms.ToTensor()])
     
-    training_set = datasets.Flowers102('./data_flowers102', split='train', transform=transform, target_transform=None, download=True)
+    training_set = datasets.Flowers102('./data_flowers102', split='test', transform=transform, target_transform=None, download=True)
     validation_set = datasets.Flowers102('./data_flowers102', split='val', transform=transform, target_transform=None, download=True)
     
     train(num_classes=option.num_classes,
@@ -235,5 +233,3 @@ if __name__ == '__main__':
         print(format(arg + ':', '<20'), format(str(getattr(option, arg)), '<'))
     
     main(option)
-
-
