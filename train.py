@@ -81,7 +81,7 @@ def train(num_classes=10,
           gamma=0.1,
           batch_size=8,
           best_accuracy_v = 0.98,
-          device=None,
+          device='cpu',
           training_set=None,
           validation_set=None,
           print_iteration=100,
@@ -181,13 +181,52 @@ def train(num_classes=10,
  
 def main(option):
     
-    # training_set = datasets.CIFAR10('./data_cifar10', train=True, transform=transforms.ToTensor(), download=True)
-    # validation_set = datasets.CIFAR10('./data_cifar10', train=False, transform=transforms.ToTensor(), download=True)
+    if option.dataset == 'cifar10':
+
+        option.num_classes = 10
+        option.input_size = 32
+        
+        training_set = datasets.CIFAR10('./data_cifar10',
+                                        train=True,
+                                        transform=transforms.ToTensor(),
+                                        download=True)
+        
+        validation_set = datasets.CIFAR10('./data_cifar10',
+                                          train=False,
+                                          transform=transforms.ToTensor(),
+                                          download=True)
+        
+        print('Using dataset CIFAR10, update:')
+        print('Input size is: 32x32')
+        print('Number of classes is: 10')
+        
+    elif option.dataset == 'flower102':
+        
+        option.num_classes = 102
+        option.input_size = 480
+        
+        transform = transforms.Compose([
+            transforms.Resize((option.input_size,option.input_size)),
+            transforms.ToTensor()])
     
-    transform = transforms.Compose([transforms.Resize((option.input_size,option.input_size)),transforms.ToTensor()])
-    
-    training_set = datasets.Flowers102('./data_flowers102', split='test', transform=transform, target_transform=None, download=True)
-    validation_set = datasets.Flowers102('./data_flowers102', split='val', transform=transform, target_transform=None, download=True)
+        training_set = datasets.Flowers102('./data_flowers102',
+                                           split='test',
+                                           transform=transform,
+                                           target_transform=None,
+                                           download=True)
+        
+        validation_set = datasets.Flowers102('./data_flowers102',
+                                             split='val',
+                                             transform=transform,
+                                             target_transform=None,
+                                             download=True)
+
+        print('Using dataset Flowers102, update:')
+        print('Input size is: 480x480')
+        print('Number of classes is: 102')
+        
+    else:
+        print('Using custom dataset')
     
     train(num_classes=option.num_classes,
           layer=option.layer,
@@ -226,6 +265,7 @@ if __name__ == '__main__':
     parser.add_argument('--print_iteration', type=int, default=100)
     parser.add_argument('--svdir', type=str, default='./modelfile/')
     parser.add_argument('--svpath', type=str, default='weight.pt')
+    parser.add_argument('--dataset', type=str, default='cifar10')
 
     option = parser.parse_args()
 
