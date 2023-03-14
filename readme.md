@@ -1,5 +1,7 @@
 # Training formwork for classification
 
+Chinese readme [readme_zh.md](./readme_zh.md)
+
 ## Introduce
 
 This is a simple formwork for training with pytorch, and only implemented some simple functions. Choose Resnet in torchvision and dataset also import from torchvision.
